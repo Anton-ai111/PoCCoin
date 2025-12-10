@@ -1,0 +1,17 @@
+<html>
+<script>
+fetch('https://www.coindesk.com/api/v1/user/capabilities', {
+  method: 'GET',
+  credentials: 'include',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+.then(response => response.text())
+.then(data => {
+  document.body.innerHTML = '<pre>' + data + '</pre>';
+  console.log(data);
+})
+.catch(error => console.error('Error:', error));
+</script>
+</html>
